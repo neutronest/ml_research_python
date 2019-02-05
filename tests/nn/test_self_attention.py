@@ -6,17 +6,17 @@ from research.nn.self_attention import MultiHeadSelfAttention
 
 def test_query_weight_shape():
 
-    sequence_size = 4
-    hidden_size = 8
-    embedding_size = 10
-    n_head = 2
-    batch_size = 10
+    batch_size = 2
+    n_head = 3
+    seq_length = 5
+    embedding_size = 7
+    hidden_size = 11
     multi_head_self_attention_machine = MultiHeadSelfAttention(
         embedding_size,
         hidden_size,
         n_head
     )
-    input_x = torch.randn(batch_size, sequence_size, embedding_size)
+    input_x = torch.randn(batch_size, seq_length, embedding_size)
     # assert(multi_head_self_attention_machine.w_queries(input_x).shape \
     #     == torch.Size([batch_size, n_head * hidden_size]))
     
