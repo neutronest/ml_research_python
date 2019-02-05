@@ -7,22 +7,26 @@ class NaiveMultiHeadSelfAttention(nn.Module):
 
     def __init__(
         self,
-        n_input,
-        n_hidden,
-        n_head
+        n_head,
+        n_query,
+        n_key,
+        n_value,
+        n_hidden
         ):
         super().__init__()
         self.n_head = n_head
-        self.input_size  = n_input
+        self.n_query  = n_query
+        self.n_key = n_key
+        self.n_value = n_value
         self.hidden_size = n_hidden
         
-        self.w_queries = nn.Linear(n_input, n_head * n_hidden)
-        self.w_keyes = nn.Linear(n_input, n_head * n_hidden)
-        self.w_values = nn.Linear(n_input, n_head * n_hidden)
+        self.w_queries = nn.Linear(n_query, n_head * n_hidden)
+        self.w_keyes = nn.Linear(n_key, n_head * n_hidden)
+        self.w_values = nn.Linear(n_value, n_head * n_hidden)
 
-        nn.init.normal_(self.w_queries.weight, mean=0, std=np.sqrt(2.0 / (n_input+n_hidden)))
-        nn.init.normal_(self.w_keyes.weight, mean=0, std=np.sqrt(2.0 / (n_input+n_hidden)))
-        nn.init.normal_(self.w_values.weight, mean=0, std=np.sqrt(2.0 / (n_input+n_hidden)))
+        nn.init.normal_(self.w_queries.weight, mean=0, std=np.sqrt(2.0 / (n_query+n_hidden)))
+        nn.init.normal_(self.w_keyes.weight, mean=0, std=np.sqrt(2.0 / (n_key+n_hidden)))
+        nn.init.normal_(self.w_values.weight, mean=0, std=np.sqrt(2.0 / (n_value+n_hidden)))
 
         self.temprature = np.power(self.hidden_size, 0.5)
         self.softmax_fn = nn.Softmax(dim=2)    

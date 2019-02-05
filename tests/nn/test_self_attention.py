@@ -15,9 +15,11 @@ n_hidden = 11
 def test_query_weight_shape():
 
     multi_head_self_attention_machine = NaiveMultiHeadSelfAttention(
-        embedding_size,
-        n_hidden,
-        n_head
+        n_head=n_head,
+        n_query=embedding_size,
+        n_key=embedding_size,
+        n_value=embedding_size,
+        n_hidden=n_hidden
     )
     input_x = torch.randn(n_batch, n_seq, embedding_size)
     query_vector = multi_head_self_attention_machine.w_queries(input_x)
@@ -26,9 +28,11 @@ def test_query_weight_shape():
 
 def test_naive_multi_head_self_attention_forward():
     multi_head_self_attention_machine = NaiveMultiHeadSelfAttention(
-        embedding_size,
-        n_hidden,
-        n_head
+        n_head=n_head,
+        n_query=embedding_size,
+        n_key=embedding_size,
+        n_value=embedding_size,
+        n_hidden=n_hidden
     )
     input_x = torch.randn(n_batch, n_seq, embedding_size)
     output = multi_head_self_attention_machine.forward(input_x, input_x, input_x)
@@ -36,9 +40,11 @@ def test_naive_multi_head_self_attention_forward():
 
 def test_naive_feedforward_neural_network():
     multi_head_self_attention_machine = NaiveMultiHeadSelfAttention(
-        embedding_size,
-        n_hidden,
-        n_head
+        n_head=n_head,
+        n_query=embedding_size,
+        n_key=embedding_size,
+        n_value=embedding_size,
+        n_hidden=n_hidden
     )
     naive_feedforward_neural_network_machine = NaiveFeedForwardNeuralNetwork(
         n_head,

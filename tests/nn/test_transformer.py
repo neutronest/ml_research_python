@@ -12,9 +12,11 @@ n_hidden = 11
 def test_naive_encoder():
 
     encoder = NaiveEncoder(
-        n_head,
-        n_input,
-        n_hidden
+        n_head=n_head,
+        n_query=n_input,
+        n_key=n_input,
+        n_value=n_input,
+        n_hidden=n_hidden
     )
     input_x = torch.randn(n_batch, n_seq, n_input)
     output = encoder(input_x, input_x, input_x)
