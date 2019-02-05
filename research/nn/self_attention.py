@@ -58,4 +58,4 @@ class MultiHeadSelfAttention(nn.Module):
         
         affect_value_scores = torch.bmm(query_key_scores_softmax, value_vector)
         affect_value_result = affect_value_scores.contiguous().view(n_batch, self.n_head, len_of_sequence, self.hidden_size)
-        return affect_value_scores
+        return affect_value_result

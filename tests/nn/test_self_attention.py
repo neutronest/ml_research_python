@@ -20,4 +20,5 @@ def test_query_weight_shape():
     # assert(multi_head_self_attention_machine.w_queries(input_x).shape \
     #     == torch.Size([batch_size, n_head * hidden_size]))
     
-    multi_head_self_attention_machine.forward(input_x)
+    output = multi_head_self_attention_machine.forward(input_x)
+    assert(output.size() == torch.Size([batch_size, n_head, seq_length, hidden_size]))
