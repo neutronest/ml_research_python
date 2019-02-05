@@ -2,7 +2,7 @@ from __future__ import print_function
 import torch
 import torch.nn as nn
 
-from research.nn.self_attention import MultiHeadSelfAttention
+from research.nn.self_attention import NaiveMultiHeadSelfAttention
 
 def test_query_weight_shape():
 
@@ -11,7 +11,7 @@ def test_query_weight_shape():
     seq_length = 5
     embedding_size = 7
     hidden_size = 11
-    multi_head_self_attention_machine = MultiHeadSelfAttention(
+    multi_head_self_attention_machine = NaiveMultiHeadSelfAttention(
         embedding_size,
         hidden_size,
         n_head

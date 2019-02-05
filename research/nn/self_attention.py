@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 
 
-class MultiHeadSelfAttention(nn.Module):
+class NaiveMultiHeadSelfAttention(nn.Module):
 
     def __init__(
         self,
