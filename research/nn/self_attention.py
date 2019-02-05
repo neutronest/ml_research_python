@@ -56,6 +56,43 @@ class NaiveMultiHeadSelfAttention(nn.Module):
         query_key_scores = query_key_scores / self.temprature
         query_key_scores_softmax = self.softmax_fn(query_key_scores)
         
+        """
+        apply the score to the value vector, 
+        shap：n_batch*n_head, seq_length, hidden_size
+        """
         affect_value_scores = torch.bmm(query_key_scores_softmax, value_vector)
-        affect_value_result = affect_value_scores.contiguous().view(n_batch, self.n_head, len_of_sequence, self.hidden_size)
+        
+        """
+        swap the dimension to n_batch, seq_length, n_head*hidden_size
+        """
+        affect_value_result = affect_value_scores.view(n_batch,  self.n_head, len_of_sequence, self.hidden_size)
+        affect_value_result = affect_value_result\
+            .permute(0,2,1,3)\
+            .contiguous()\
+            .view(n_batch, len_of_sequence, self.n_head * self.hidden_size)
         return affect_value_result
+
+class NaiveFeedForwardNeuralNetwork(nn.Module):
+    def __init__(
+        self,
+        n_head,
+        n_input,
+        n_hidden
+        ):
+        super().__init__()
+        self.n_input = n_input
+        self.n_hidden = n_hidden
+        self.n_head = n_head
+        self.feed_forward_fn = nn.Linear(n_head*n_input, n_hidden)
+        return
+    
+    def forward(self, input_x):
+        """
+        input_x: torch.Tensor
+                 shape: [n_batch, n_seq, n_head*n_hidden]
+        """
+        n_batch, n_seq, _ = input_x.size()
+        input_x_transpose = input_x.contiguous().view(n_batch, n_seq, self.n_head, self.n_input)
+
+        output = self.feed_forward_fn(input_x)
+        return output.contiguous().view(n_batch*n_seq, self.n_hidden)
