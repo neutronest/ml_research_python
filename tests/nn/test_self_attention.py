@@ -31,7 +31,7 @@ def test_naive_multi_head_self_attention_forward():
         n_head
     )
     input_x = torch.randn(n_batch, n_seq, embedding_size)
-    output = multi_head_self_attention_machine.forward(input_x)
+    output = multi_head_self_attention_machine.forward(input_x, input_x, input_x)
     assert(output.size() == torch.Size([n_batch, n_seq, n_head*n_hidden]))
 
 def test_naive_feedforward_neural_network():
@@ -47,7 +47,7 @@ def test_naive_feedforward_neural_network():
     )
 
     input_x = torch.randn(n_batch, n_seq, embedding_size)
-    attention_output = multi_head_self_attention_machine.forward(input_x)
+    attention_output = multi_head_self_attention_machine.forward(input_x, input_x, input_x)
     output = naive_feedforward_neural_network_machine.forward(attention_output)
     print(output.size())
 

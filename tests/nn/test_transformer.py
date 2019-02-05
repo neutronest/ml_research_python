@@ -17,5 +17,5 @@ def test_naive_encoder():
         n_hidden
     )
     input_x = torch.randn(n_batch, n_seq, n_input)
-    output = encoder(input_x)
+    output = encoder(input_x, input_x, input_x)
     print(output.size())

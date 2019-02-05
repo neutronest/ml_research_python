@@ -27,8 +27,8 @@ class NaiveEncoder(nn.Module):
         )
         return
     
-    def forward(self, input_x):
-        attention_output = self.mutli_head_attention(input_x)
+    def forward(self, input_query, input_key, input_value):
+        attention_output = self.mutli_head_attention(input_query, input_key, input_value)
         output = self.feed_forward(attention_output)
         return output
     
