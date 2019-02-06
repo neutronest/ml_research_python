@@ -38,22 +38,22 @@ def test_naive_multi_head_self_attention_forward():
     output = multi_head_self_attention_machine.forward(input_x, input_x, input_x)
     assert(output.size() == torch.Size([n_batch, n_seq, n_head*n_hidden]))
 
-def test_naive_feedforward_neural_network():
-    multi_head_self_attention_machine = NaiveMultiHeadSelfAttention(
-        n_head=n_head,
-        n_query=embedding_size,
-        n_key=embedding_size,
-        n_value=embedding_size,
-        n_hidden=n_hidden
-    )
-    naive_feedforward_neural_network_machine = NaiveFeedForwardNeuralNetwork(
-        n_head,
-        n_hidden,
-        n_hidden
-    )
+# def test_naive_feedforward_neural_network():
+#     multi_head_self_attention_machine = NaiveMultiHeadSelfAttention(
+#         n_head=n_head,
+#         n_query=embedding_size,
+#         n_key=embedding_size,
+#         n_value=embedding_size,
+#         n_hidden=n_hidden
+#     )
+#     naive_feedforward_neural_network_machine = NaiveFeedForwardNeuralNetwork(
+#         n_head,
+#         n_hidden,
+#         n_hidden
+#     )
 
-    input_x = torch.randn(n_batch, n_seq, embedding_size)
-    attention_output = multi_head_self_attention_machine.forward(input_x, input_x, input_x)
-    output = naive_feedforward_neural_network_machine.forward(attention_output)
-    print(output.size())
+#     input_x = torch.randn(n_batch, n_seq, embedding_size)
+#     attention_output = multi_head_self_attention_machine.forward(input_x, input_x, input_x)
+#     output = naive_feedforward_neural_network_machine.forward(attention_output)
+#     print(output.size())
 
