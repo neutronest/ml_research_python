@@ -87,7 +87,7 @@ class NaiveFeedForwardNeuralNetwork(nn.Module):
         self.n_input = n_input
         self.n_hidden = n_hidden
         self.n_head = n_head
-        self.feed_forward_fn = nn.Linear(n_head*n_input, n_hidden)
+        self.feed_forward_fn = nn.Linear(n_input, n_head*n_hidden)
         return
     
     def forward(self, input_x):
@@ -99,4 +99,14 @@ class NaiveFeedForwardNeuralNetwork(nn.Module):
         input_x_transpose = input_x.contiguous().view(n_batch, n_seq, self.n_head, self.n_input)
 
         output = self.feed_forward_fn(input_x)
-        return output.contiguous().view(n_batch*n_seq, self.n_hidden)
+        return output.contiguous().view(n_batch, n_seq, self.n_head*self.n_hidden)
+
+
+class PositionwiseFeedForwardNetwork(nn.Module):
+    def __init__(self, n_input, n_hidden, dropout=0.1):
+        super(PositionwiseFeedForwardNetwork, self).__init__()
+        self.w_1 = nn.Linear(n_input, n_hidden)
+        self.w_2 = nn.Linear(n_hidden, n_input)
+        self.dropout = nn.Dropout(dropout)
+    def forward(self, x):
+        return self.w_2(self.dropout(nn.functional.relu(self.w_1(x))))
