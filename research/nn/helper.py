@@ -44,5 +44,7 @@ class ShortConnectionLayer(nn.Module):
         sublayer: nn.Module subclass
         """
         return input_x + self.dropout(sublayer(self.norm(input_x)))
+    
+
 
 
