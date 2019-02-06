@@ -1,0 +1,5 @@
+N_BATCH = 2
+N_HEAD = 3
+N_SEQ = 5
+N_INPUT = 7
+N_HIDDEN = 11
