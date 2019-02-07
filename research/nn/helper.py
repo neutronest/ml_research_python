@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 import torch
 import torch.nn as nn
@@ -6,7 +7,7 @@ def clones(module, n_layers):
     """
     Produce n layers for module
     """
-    return nn.MoudleList([copy.deepcopy(moduole) for _ in range(N)])
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(n_layers)])
 
 
 class LayerNorm(nn.Module):
@@ -46,5 +47,24 @@ class ShortConnectionLayer(nn.Module):
         return input_x + self.dropout(sublayer(self.norm(input_x)))
     
 
-
-
+def scaled_dot_product_attention(
+    query_input,
+    key_input,
+    value_input,
+    mask=None,
+    dropout_prob=None):
+    """
+    query_input's dimension = key_input
+    """
+    # can use like that???
+    n_query = query_input.size(-1)
+    temprature = np.power(n_query, 0.5)
+    query_key_scores = torch.bmm(query_input, key_input.transpose(-2, -1)) / temprature
+    if mask is not None:
+        # todo: ?
+        query_key_scores = query_key_scores.mask_fill(mask==0, -1e9)
+    softmax_scores = nn.functional.softmax(query_key_scores, -1)
+    if dropout_prob is not None:
+        softmax_fn = nn.Dropout(dropout_prob)
+        softmax_scores = softmax_fn(softmax_scores)
+    return torch.matmul(softmax_scores, value_input), softmax_scores
