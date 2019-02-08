@@ -60,8 +60,6 @@ def test_scaled_dot_product_attention():
         key_input,
         value_input
     )
-    print(attention_output.size())
-    print(attention_scores.size())
     assert (attention_output.size() == torch.Size([
         test_constants.N_BATCH,
         test_constants.N_SEQ,
