@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 
 from research.nn.helper import LayerNorm, ShortConnectionLayer, clones
+from research.nn.basic_self_attention import PositionwiseFeedForward
+
 
 class BasicEncoder(nn.Module):
     def __init__(self, layer, n_layers):
@@ -43,7 +45,7 @@ class BasicEncoderLayer(nn.Module):
         self.sublayers = clones(ShortConnectionLayer(n_features, dropout_prob), 2)
         return
     
-    def forward(self, input_x, mask):
+    def forward(self, input_x, mask=None):
         """
         TODO: mask type???
         """

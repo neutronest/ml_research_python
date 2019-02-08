@@ -5,6 +5,7 @@ import torch.nn as nn
 from research.nn.self_attention import NaiveMultiHeadSelfAttention
 from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
 from research.nn.basic_self_attention import BasicMultiHeadSelfAttention
+from research.nn.basic_self_attention import PositionwiseFeedForward
 from tests.nn import test_constants
 n_batch = 2
 n_head = 3
@@ -48,8 +49,12 @@ def test_basic_multihead_self_attention():
         test_constants.N_BATCH, 
         test_constants.N_SEQ,
         test_constants.N_INPUT)
-    output, _ = basic_multihead_self_attention_machine(input_x, input_x, input_x)
-    print(output.size())
+    output = basic_multihead_self_attention_machine(input_x, input_x, input_x)
+    assert(output.size() == torch.Size([
+        test_constants.N_BATCH,
+        test_constants.N_SEQ,
+        test_constants.N_INPUT
+    ]))
     
 
 

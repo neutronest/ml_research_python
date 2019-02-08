@@ -7,6 +7,8 @@ from research.nn import helper
 from research.nn.basic_transformer import BasicEncoder, BasicEncoderLayer
 from research.nn.basic_transformer import BasicDecoder, BasicDecoderLayer
 from research.nn.self_attention import NaiveMultiHeadSelfAttention
+from research.nn.basic_self_attention import BasicMultiHeadSelfAttention
+from research.nn.basic_self_attention import PositionwiseFeedForward
 from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
 
 def test_basic_encoder():
@@ -15,15 +17,11 @@ def test_basic_encoder():
         test_constants.N_SEQ,
         test_constants.N_INPUT)
     
-    multihead_attention = NaiveMultiHeadSelfAttention(
-        test_constants.N_HEAD,
-        test_constants.N_INPUT,
-        test_constants.N_INPUT,
-        test_constants.N_INPUT,
-        test_constants.N_HIDDEN
+    multihead_attention = BasicMultiHeadSelfAttention(
+        test_constants.N_BATCH,
+        test_constants.N_INPUT
     )
-    feedforward_attention = NaiveFeedForwardNeuralNetwork(
-        test_constants.N_HEAD,
+    feedforward_attention = PositionwiseFeedForward(
         test_constants.N_INPUT,
         test_constants.N_HIDDEN
     )
@@ -34,5 +32,4 @@ def test_basic_encoder():
         feedforward_attention,
         dropout_prob=0.5
     )
-
-    
+    output = basic_encoder_layer_machine(input_x)

@@ -15,7 +15,7 @@ class BasicMultiHeadSelfAttention(nn.Module):
         self.n_head = n_head
         self.n_hidden = n_hidden
         self.linear_fns = helper.clones(nn.Linear(n_hidden, n_head*n_hidden), 3)
-        self.linear_last_fn = nn.Linear(n_head*n_hidden, n_head*n_hidden)
+        self.linear_last_fn = nn.Linear(n_head*n_hidden, n_hidden)
         self.dropout_prob = dropout_prob
     
     def forward(self, query, key, value, mask=None):
@@ -34,6 +34,18 @@ class BasicMultiHeadSelfAttention(nn.Module):
             query_encode, key_encode, value_encode, dropout_prob=self.dropout_prob)
         output = value_attention_output.transpose(1, 2).contiguous().view(n_batch, -1, self.n_head * self.n_hidden )
         return self.linear_last_fn(output)
+
+class PositionwiseFeedForward(nn.Module):
+    "Implements FFN equation."
+    def __init__(self, n_input, n_hidden, dropout_prob=0.1):
+        super(PositionwiseFeedForward, self).__init__()
+        self.w1 = nn.Linear(n_input, n_hidden)
+        self.w2 = nn.Linear(n_hidden, n_input)
+        self.dropout = nn.Dropout(dropout_prob)
+
+    def forward(self, x):
+        return self.w2(self.dropout(nn.functional.relu(self.w1(x))))
+
 
 
 
