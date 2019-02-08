@@ -43,8 +43,7 @@ def test_basic_multihead_self_attention():
 
     basic_multihead_self_attention_machine = BasicMultiHeadSelfAttention(
         n_head=test_constants.N_HEAD,
-        n_hidden=test_constants.N_HIDDEN
-    )
+        n_hidden=test_constants.N_INPUT)
     input_x = torch.randn(
         test_constants.N_BATCH, 
         test_constants.N_SEQ,

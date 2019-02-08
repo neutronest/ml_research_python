@@ -13,8 +13,9 @@ class BasicMultiHeadSelfAttention(nn.Module):
         dropout_prob=0.5):
         super(BasicMultiHeadSelfAttention, self).__init__()
         self.n_head = n_head
-
-        self.linear_fns = helper.clones(nn.Linear(n_hidden, n_hidden), 4)
+        self.n_hidden = n_hidden
+        self.linear_fns = helper.clones(nn.Linear(n_hidden, n_head*n_hidden), 3)
+        self.linear_last_fn = nn.Linear(n_head*n_hidden, n_head*n_hidden)
         self.dropout_prob = dropout_prob
     
     def forward(self, query, key, value, mask=None):
@@ -32,7 +33,7 @@ class BasicMultiHeadSelfAttention(nn.Module):
         value_attention_output, attention = helper.scaled_dot_product_attention(
             query_encode, key_encode, value_encode, dropout_prob=self.dropout_prob)
         output = value_attention_output.transpose(1, 2).contiguous().view(n_batch, -1, self.n_head * self.n_hidden )
-        return self.linear_fns[-1](output)
+        return self.linear_last_fn(output)
 
 
 

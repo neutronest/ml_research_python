@@ -59,7 +59,7 @@ def scaled_dot_product_attention(
     # can use like that???
     n_query = query_input.size(-1)
     temprature = np.power(n_query, 0.5)
-    query_key_scores = torch.bmm(query_input, key_input.transpose(-2, -1)) / temprature
+    query_key_scores = torch.matmul(query_input, key_input.transpose(-2, -1)) / temprature
     if mask is not None:
         # todo: ?
         query_key_scores = query_key_scores.mask_fill(mask==0, -1e9)
