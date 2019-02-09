@@ -1,134 +1,112 @@
-import tensorflow as tf
 import numpy as np
-class SelfAttention:
+import torch
+import torch.nn as nn
+
+
+class NaiveMultiHeadSelfAttention(nn.Module):
+
     def __init__(
         self,
-        input_size,
-        hidden_size,
-        max_sequence_length
+        n_head,
+        n_query,
+        n_key,
+        n_value,
+        n_hidden
         ):
-
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.max_sequence_length = max_sequence_length
-        self.input_x = tf.placeholder(tf.float32, [None, max_sequence_length, input_size], name="input_x")    
-
-        self.Q_W = tf.get_variable(
-            "Q_W",
-            shape=[input_size, hidden_size],
-            initializer=tf.contrib.layers.xavier_initializer()
-        )
-        self.K_W = tf.get_variable(
-            "K_W",
-            shape=[input_size, hidden_size],
-            initializer=tf.contrib.layers.xavier_initializer()
-        )
-        self.V_W = tf.get_variable(
-            "V_W",
-            shape=[input_size, hidden_size],
-            initializer=tf.contrib.layers.xavier_initializer()
-        )
+        super().__init__()
+        self.n_head = n_head
+        self.n_query  = n_query
+        self.n_key = n_key
+        self.n_value = n_value
+        self.hidden_size = n_hidden
         
-        qkv_batch_list = tf.map_fn(
-            lambda x: tf.map_fn(
-                self.get_query_key_value_vectors, 
-                x, 
-                dtype=(
-                    tf.float32,
-                    tf.float32,
-                    tf.float32
-                )),
-            self.input_x,
-            dtype=(
-                    tf.float32,
-                    tf.float32,
-                    tf.float32
-                ))
-        # qkv_batch_list = tf.map_fn(
-        #     lambda sequence_embedding: tf.map_fn(
-        #         self.apply,
-        #         sequence_embedding,
-        #         dtype=(
-        #             tf.float32
-        #         )
-        #     ),
-        #     self.input_x
-        # )
+        self.w_queries = nn.Linear(n_query, n_head * n_hidden)
+        self.w_keyes = nn.Linear(n_key, n_head * n_hidden)
+        self.w_values = nn.Linear(n_value, n_head * n_hidden)
 
-        self.qkv_list = qkv_batch_list
+        nn.init.normal_(self.w_queries.weight, mean=0, std=np.sqrt(2.0 / (n_query+n_hidden)))
+        nn.init.normal_(self.w_keyes.weight, mean=0, std=np.sqrt(2.0 / (n_key+n_hidden)))
+        nn.init.normal_(self.w_values.weight, mean=0, std=np.sqrt(2.0 / (n_value+n_hidden)))
+
+        self.temprature = np.power(self.hidden_size, 0.5)
+        self.softmax_fn = nn.Softmax(dim=2)    
         return
-
-    def apply(self, input_embedding):
-        qkv_list = tf.map_fn(
-            self.get_query_key_value_vectors,
-            input_embedding,
-            dtype=(
-                tf.float32,
-                tf.float32,
-                tf.float32))
-        query_key_softmax_scores = self.get_query_key_score(qkv_list)
-        return query_key_softmax_scores
-        
     
+    def forward(self, input_query, input_key, input_value, mask=None):
+        """
+        """
 
-    def get_query_key_score(self, query_key_value_list):
-        query_vector_list = [qkv[0] for qkv in query_key_value_list]
-        key_vector_list = [qkv[1] for qkv in query_key_value_list]
-        value_vector_list = [qkv[2] for qkv in query_key_value_list]
+        n_batch, len_of_sequence, _ = input_query.size()
         
-        for embedding_id, query_vector in enumerate(query_vector_list):
-            # boardcast
-            query_key_scores = query_vector * key_vector_list
-            query_key_scores /= tf.sqrt(self.hidden_size)
-            query_key_softmax_scores = tf.nn.softmax(query_key_scores, axis=1)
-        return query_key_softmax_scores
+        query_vector = self.w_queries(input_query)
+        key_vector = self.w_keyes(input_key)
+        value_vector = self.w_values(input_value)
+        query_vector = query_vector.view(n_batch, len_of_sequence, self.n_head, self.hidden_size)
+        key_vector = key_vector.view(n_batch, len_of_sequence, self.n_head, self.hidden_size)
+        value_vector = value_vector.view(n_batch, len_of_sequence, self.n_head, self.hidden_size)
+        
 
-    def get_query_key_value_vectors(self, input_embedding):
-        input_embedding_expand_dim = tf.expand_dims(input_embedding, 0)
-        q = tf.matmul(input_embedding_expand_dim, self.Q_W)
-        k = tf.matmul(input_embedding_expand_dim, self.K_W)
-        v = tf.matmul(input_embedding_expand_dim, self.V_W)
-        return q,k,v
+        # todo: understand
+        # shape: n_batch * n_head, seq_length, hidden_size
+        query_vector = query_vector.permute(2, 0, 1, 3).contiguous().view(-1, len_of_sequence, self.hidden_size)
+        key_vector = key_vector.permute(2, 0, 1, 3).contiguous().view(-1, len_of_sequence, self.hidden_size)
+        value_vector = value_vector.permute(2,0,1,3).contiguous().view(-1, len_of_sequence, self.hidden_size)
+        """
+        get score by q1*k1, q1*k2 .. q2*k1, q2*k2
+        for each token in one seq, generate a seq_length vector to represent the score vector
+        shape: n_batch*n_head, seq_length, seq_length
+        """
+        query_key_scores = torch.bmm(query_vector, key_vector.transpose(1, 2))
+        query_key_scores = query_key_scores / self.temprature
+        query_key_scores_softmax = self.softmax_fn(query_key_scores)
+        
+        """
+        apply the score to the value vector, 
+        shap：n_batch*n_head, seq_length, hidden_size
+        """
+        affect_value_scores = torch.bmm(query_key_scores_softmax, value_vector)
+        
+        """
+        swap the dimension to n_batch, seq_length, n_head*hidden_size
+        """
+        affect_value_result = affect_value_scores.view(n_batch,  self.n_head, len_of_sequence, self.hidden_size)
+        affect_value_result = affect_value_result\
+            .permute(0,2,1,3)\
+            .contiguous()\
+            .view(n_batch, len_of_sequence, self.n_head * self.hidden_size)
+        return affect_value_result
 
-
-    def _embedding_query_iteration(self):
+class NaiveFeedForwardNeuralNetwork(nn.Module):
+    def __init__(
+        self,
+        n_head,
+        n_input,
+        n_hidden
+        ):
+        super().__init__()
+        self.n_input = n_input
+        self.n_hidden = n_hidden
+        self.n_head = n_head
+        self.feed_forward_fn = nn.Linear(n_input, n_head*n_hidden)
         return
-        
+    
+    def forward(self, input_x):
+        """
+        input_x: torch.Tensor
+                 shape: [n_batch, n_seq, n_head*n_hidden]
+        """
+        n_batch, n_seq, _ = input_x.size()
+        input_x_transpose = input_x.contiguous().view(n_batch, n_seq, self.n_head, self.n_input)
 
-if __name__ == "__main__":
+        output = self.feed_forward_fn(input_x)
+        return output.contiguous().view(n_batch, n_seq, self.n_head*self.n_hidden)
 
 
-    INPUT_SIZE = 64
-    HIDDEN_SIZE = 16
-    SEQUENCE_SIZE = 3
-
-    with tf.Graph().as_default():
-        session_conf = tf.ConfigProto()
-        sess = tf.Session(config=session_conf)
-        with sess.as_default():
-            
-            input_data = []
-            for sentence_id in range(10):
-                sentence_embedding = []
-                for word_id in range(SEQUENCE_SIZE):
-                    word_embedding = np.random.normal(0, 1, INPUT_SIZE)
-                    sentence_embedding.append(word_embedding)
-                input_data.append(sentence_embedding)
-            input_data = np.array(input_data)
-            
-            self_attention_machine = SelfAttention(
-                input_size=INPUT_SIZE,
-                hidden_size=HIDDEN_SIZE,
-                max_sequence_length=SEQUENCE_SIZE
-            )
-            sess.run(tf.global_variables_initializer())
-
-            feed_dict = {
-                self_attention_machine.input_x: input_data
-            }
-            
-            result = sess.run(
-                [self_attention_machine.qkv_list],
-                feed_dict=feed_dict
-            )
-            print(result)
+class PositionwiseFeedForwardNetwork(nn.Module):
+    def __init__(self, n_input, n_hidden, dropout=0.1):
+        super(PositionwiseFeedForwardNetwork, self).__init__()
+        self.w_1 = nn.Linear(n_input, n_hidden)
+        self.w_2 = nn.Linear(n_hidden, n_input)
+        self.dropout = nn.Dropout(dropout)
+    def forward(self, x):
+        return self.w_2(self.dropout(nn.functional.relu(self.w_1(x))))
