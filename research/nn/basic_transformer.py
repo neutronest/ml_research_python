@@ -17,13 +17,13 @@ class BasicEncoder(nn.Module):
         n_layers: int
                number of layers
         """
-        super(Encoder, self).__init__()
+        super(BasicEncoder, self).__init__()
         self.n_layers = n_layers
         self.norm = LayerNorm(layer.n_features)
         self.layers = clones(layer, n_layers)
         return
     
-    def forward(self, input_x, mask):
+    def forward(self, input_x, mask=None):
         output = input_x
         for layer in self.layers:
             output = layer(output, mask)
@@ -70,13 +70,13 @@ class BasicDecoder(nn.Module):
         n_layers: int
                number of layers
         """
-        super(Encoder, self).__init__()
+        super(BasicDecoder, self).__init__()
         self.n_layers = n_layers
         self.norm = LayerNorm(layer.n_features)
         self.layers = clones(layer, n_layers)
         return
     
-    def forward(self, input_x, memory, source_mask, target_mask):
+    def forward(self, input_x, memory, source_mask=None, target_mask=None):
         output = input_x
         for layer in self.layers:
             output = layer(output, memory, source_mask, target_mask)
@@ -93,6 +93,7 @@ class BasicDecoderLayer(nn.Module):
         """
         """
         super(BasicDecoderLayer, self).__init__()
+        self.n_features = n_features
         self.self_attention_layer = self_attention_layer
         self.source_attention_layer = source_attention_layer
         self.feedforward_layer = feedforward_layer
@@ -100,7 +101,7 @@ class BasicDecoderLayer(nn.Module):
         self.sublayers = clones(ShortConnectionLayer(n_features, dropout_prob), 3)
         return
     
-    def forward(self, input_x, encoder_memory, source_mask, target_mask):
+    def forward(self, input_x, encoder_memory, source_mask=None, target_mask=None):
         memory = encoder_memory
         output = input_x
         output = self.sublayers[0](output, lambda x: self.self_attention_layer(x, x, x, target_mask))
@@ -197,7 +198,7 @@ class BasicTransformer(nn.Module):
         self.decoder_layer = BasicDecoderLayer(
             n_features=n_hidden,
             self_attention_layer=deepcopy(attention_machine),
-            source_attention_layer=deepcopy(attention_mahcine),
+            source_attention_layer=deepcopy(attention_machine),
             feedforward_layer=deepcopy(feedforward_machine),
             dropout_prob=dropout_prob
         )
@@ -205,3 +206,13 @@ class BasicTransformer(nn.Module):
             self.decoder_layer,
             n_layer
         )
+        self.init()
+    def init(self):
+        for p in self.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform(p)
+    
+    def forward(self, input_x):
+        encoder_output = self.encoder(input_x)
+        decoder_output = self.decoder(input_x, encoder_output)
+        return decoder_output
