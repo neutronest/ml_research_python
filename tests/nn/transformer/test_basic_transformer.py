@@ -4,14 +4,16 @@ import torch.nn as nn
 
 from tests.nn import test_constants
 from research.nn import helper
-from research.nn.basic_transformer import BasicEncoder, BasicEncoderLayer
-from research.nn.basic_transformer import BasicDecoder, BasicDecoderLayer
-from research.nn.self_attention import NaiveMultiHeadSelfAttention
-from research.nn.basic_self_attention import BasicMultiHeadSelfAttention
-from research.nn.basic_self_attention import PositionwiseFeedForward
+from research.nn.transformer.basic_transformer import BasicEncoder, BasicEncoderLayer
+from research.nn.transformer.basic_transformer import BasicDecoder, BasicDecoderLayer
+from research.nn.transformer.basic_transformer import BasicTransformer
+from research.nn.transformer.basic_transformer import Embeddings
+from research.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
+from research.nn.transformer.basic_self_attention import PositionwiseFeedForward
 from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
-from research.nn.basic_transformer import BasicTransformer
-from research.nn.basic_transformer import Embeddings
+from research.nn.self_attention import NaiveMultiHeadSelfAttention
+
+
 def test_basic_encoder():
     input_x = torch.randn(
         test_constants.N_BATCH, 

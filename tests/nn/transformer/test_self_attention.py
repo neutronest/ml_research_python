@@ -4,8 +4,8 @@ import torch.nn as nn
 
 from research.nn.self_attention import NaiveMultiHeadSelfAttention
 from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
-from research.nn.basic_self_attention import BasicMultiHeadSelfAttention
-from research.nn.basic_self_attention import PositionwiseFeedForward
+from research.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
+from research.nn.transformer.basic_self_attention import PositionwiseFeedForward
 from tests.nn import test_constants
 n_batch = 2
 n_head = 3
