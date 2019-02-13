@@ -2,3 +2,4 @@ torch==1.0.0
 torchvision==0.2.1
 pytest==3.6.3
 pytest-mock==1.10.0
+gensim==3.5.0

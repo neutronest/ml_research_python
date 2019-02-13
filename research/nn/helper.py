@@ -2,6 +2,8 @@ import copy
 import numpy as np
 import torch
 import torch.nn as nn
+import gensim
+
 
 def clones(module, n_layers):
     """
@@ -68,3 +70,18 @@ def scaled_dot_product_attention(
         softmax_fn = nn.Dropout(dropout_prob)
         softmax_scores = softmax_fn(softmax_scores)
     return torch.matmul(softmax_scores, value_input), softmax_scores
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    word2vec_data_path = "./data/word_embedding_model/GoogleNews-vectors-negative300.bin.gz"
+    word2vec_model = load_word2vec(word2vec_data_path)
+    word_map = generate_word_map_from_word2vec_model(word2vec_model)
+    import pdb
+    pdb.set_trace() 

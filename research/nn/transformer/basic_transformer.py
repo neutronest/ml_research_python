@@ -4,8 +4,8 @@ import torch
 import torch.nn as nn
 
 from research.nn.helper import LayerNorm, ShortConnectionLayer, clones
-from research.nn.basic_self_attention import PositionwiseFeedForward
-from research.nn.basic_self_attention import BasicMultiHeadSelfAttention
+from research.nn.transformer.basic_self_attention import PositionwiseFeedForward
+from research.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
 
 
 
