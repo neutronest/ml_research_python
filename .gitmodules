@@ -1,0 +1,3 @@
+[submodule "transformer"]
+	path = transformer
+	url = https://github.com/neutronest/attention-is-all-you-need-pytorch.git
