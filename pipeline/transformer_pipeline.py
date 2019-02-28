@@ -17,7 +17,7 @@ def main():
     # parser.add_argument('-data', required=True)
 
     parser.add_argument('-epoch', type=int, default=10)
-    parser.add_argument('-batch_size', type=int, default=64)
+    parser.add_argument('-batch_size', type=int, default=32)
 
     #parser.add_argument('-d_word_vec', type=int, default=512)
     parser.add_argument('-d_model', type=int, default=512)
@@ -57,6 +57,10 @@ def main():
     dev_src_idx = dev_qp_idx
     dev_tgt_idx = dev_a_idx
     word2idx = data["word2idx"]
+
+    print("training data size: {}".format(len(train_qp_idx)))
+    print("dev data size: {}".format(len(dev_qp_idx)))
+    print("vocab size: {}".format(len(word2idx.keys())))
     # import pdb
     # pdb.set_trace()
 
