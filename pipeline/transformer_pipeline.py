@@ -17,7 +17,7 @@ def main():
     # parser.add_argument('-data', required=True)
 
     parser.add_argument('-epoch', type=int, default=10)
-    parser.add_argument('-batch_size', type=int, default=32)
+    parser.add_argument('-batch_size', type=int, default=16)
 
     #parser.add_argument('-d_word_vec', type=int, default=512)
     parser.add_argument('-d_model', type=int, default=512)
@@ -33,8 +33,8 @@ def main():
     parser.add_argument('-embs_share_weight', action='store_true')
     parser.add_argument('-proj_share_weight', action='store_true')
 
-    parser.add_argument('-log', default=None)
-    parser.add_argument('-save_model', default=None)
+    parser.add_argument('-log', default="./output/vanilla_transformer")
+    parser.add_argument('-save_model', default=True)
     parser.add_argument('-save_mode', type=str, choices=['all', 'best'], default='best')
 
     parser.add_argument('-no_cuda', action='store_true')
@@ -80,7 +80,7 @@ def main():
     # n_head = 8
     # dropout = 0.1
 
-    is_use_cuda = False
+    is_use_cuda = True
     device = torch.device('cuda' if is_use_cuda else 'cpu')
     transformer = Transformer(
         src_vocab_size,

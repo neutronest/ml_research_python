@@ -17,7 +17,8 @@ def prepare_data_instances(data_path):
         q_instance = [Constants.BOS_WORD] + question_text.split(" ") + [Constants.EOS_WORD]
         a_instance = [Constants.BOS_WORD] + answer_text.split(" ") + [Constants.EOS_WORD]
         # concate the question and paragraph together
-        word_instances.append(q_instance + p_instance)
+        word_instances.append(q_instance)
+        word_instances.append(p_instance)
         word_instances.append(a_instance)
         qp_instances.append(q_instance + p_instance)
         a_instances.append(a_instance)
@@ -37,9 +38,32 @@ def main():
     dev_qp_idx_instances = prepare_idx_instances(dev_qp_instances, word2idx)
     dev_a_idx_instances = prepare_idx_instances(dev_a_instances, word2idx)
 
+    max_seq_length = 0
+    train_filter_qp_idx_instances = []
+    train_filter_a_idx_instances = []
+    dev_filter_qp_idx_instances = []
+    dev_filter_a_idx_instances = []
+
+    for qp_idx, a_idx in zip(train_qp_idx_instances, train_a_idx_instances):
+        len_qb_idx = len(qp_idx)
+        len_a_idx = len(a_idx)
+        if len_qb_idx > 300 or len_a_idx > 300:
+            continue
+        train_filter_qp_idx_instances.append(qp_idx)
+        train_filter_a_idx_instances.append(a_idx)
+
+    for qp_idx, a_idx in zip(dev_qp_idx_instances, dev_a_idx_instances):
+        len_qb_idx = len(qp_idx)
+        len_a_idx = len(a_idx)
+        if len_qb_idx > 300 or len_a_idx > 300:
+            continue
+        dev_filter_qp_idx_instances.append(qp_idx)
+        dev_filter_a_idx_instances.append(a_idx)
+
+
     data = {
-        "train_idx": (train_qp_idx_instances, train_a_idx_instances),
-        "dev_idx": (dev_qp_idx_instances, dev_a_idx_instances),
+        "train_idx": (train_filter_qp_idx_instances, train_filter_a_idx_instances),
+        "dev_idx": (dev_filter_qp_idx_instances, dev_filter_a_idx_instances),
         "word2idx": word2idx
     }
     torch.save(data, "./output/squad_idx.data")
