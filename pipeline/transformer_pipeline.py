@@ -42,7 +42,7 @@ def main():
     parser.add_argument('-num_workers', type=int, default=2)
 
     opt = parser.parse_args()
-    opt.cuda = not opt.no_cuda
+    opt.cuda = True
     opt.d_word_vec = opt.d_model
     opt.max_token_seq_len = 256
 
@@ -50,20 +50,12 @@ def main():
     data = torch.load(squad_data_path)
     print("load data done")
 
-    
-    train_instances = data["train_instances"]
-    dev_instances = data["dev_instances"]
-
-    # train_src_instances = [t[0] for t in train_instances]
-    # train_tgt_instances = [t[1] for t in train_instances]
-    # dev_src_instances = [t[0] for t in dev_instances]
-    # dev_tgt_instances = [t[1] for t in dev_instances]
-    train_idx = data["train_idx"]
-    dev_idx = data["dev_idx"]
-    train_src_idx = [t[0][0] for t in train_idx]
-    train_tgt_idx = [t[1][0] for t in train_idx]
-    dev_src_idx = [t[0][0] for t in dev_idx]
-    dev_tgt_idx = [t[1][0] for t in dev_idx]
+    train_qp_idx, train_a_idx = data["train_idx"]
+    dev_qp_idx, dev_a_idx = data["dev_idx"]
+    train_src_idx = train_qp_idx
+    train_tgt_idx = train_a_idx
+    dev_src_idx = dev_qp_idx
+    dev_tgt_idx = dev_a_idx
     word2idx = data["word2idx"]
     # import pdb
     # pdb.set_trace()
