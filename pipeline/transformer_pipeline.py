@@ -34,7 +34,7 @@ def main():
     parser.add_argument('-proj_share_weight', action='store_true')
 
     parser.add_argument('-log', default="./output/vanilla_transformer")
-    parser.add_argument('-save_model', default=True)
+    parser.add_argument('-save_model', default="./output/")
     parser.add_argument('-save_mode', type=str, choices=['all', 'best'], default='best')
 
     parser.add_argument('-no_cuda', action='store_true')
@@ -42,9 +42,10 @@ def main():
     parser.add_argument('-num_workers', type=int, default=2)
 
     opt = parser.parse_args()
-    opt.cuda = True
+    opt.cuda = False
+    is_use_cuda = False
     opt.d_word_vec = opt.d_model
-    opt.max_token_seq_len = 256
+    opt.max_token_seq_len = 300
 
     squad_data_path = "./output/squad_idx.data"
     data = torch.load(squad_data_path)
@@ -52,10 +53,10 @@ def main():
 
     train_qp_idx, train_a_idx = data["train_idx"]
     dev_qp_idx, dev_a_idx = data["dev_idx"]
-    train_src_idx = train_qp_idx
-    train_tgt_idx = train_a_idx
-    dev_src_idx = dev_qp_idx
-    dev_tgt_idx = dev_a_idx
+    train_src_idx = train_qp_idx[:100]
+    train_tgt_idx = train_a_idx[:100]
+    dev_src_idx = dev_qp_idx[:100]
+    dev_tgt_idx = dev_a_idx[:100]
     word2idx = data["word2idx"]
 
     print("training data size: {}".format(len(train_qp_idx)))
@@ -80,7 +81,6 @@ def main():
     # n_head = 8
     # dropout = 0.1
 
-    is_use_cuda = True
     device = torch.device('cuda' if is_use_cuda else 'cpu')
     transformer = Transformer(
         src_vocab_size,
