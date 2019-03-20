@@ -1,2 +1,5 @@
-# ml_research_python
-Some machine learning research code
+# tharsis
+
+![](https://i.imgur.com/cwz64tu.jpg)
+
+
