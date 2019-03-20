@@ -1,6 +1,6 @@
 import torch
 
-from research.nn.naive_transformer import NaiveEncoder, NaiveDecoder
+from tharsis.nn.naive_transformer import NaiveEncoder, NaiveDecoder
 
 
 n_batch = 2

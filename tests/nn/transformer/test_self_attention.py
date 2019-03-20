@@ -2,10 +2,10 @@ from __future__ import print_function
 import torch
 import torch.nn as nn
 
-from research.nn.self_attention import NaiveMultiHeadSelfAttention
-from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
-from research.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
-from research.nn.transformer.basic_self_attention import PositionwiseFeedForward
+from tharsis.nn.self_attention import NaiveMultiHeadSelfAttention
+from tharsis.nn.self_attention import NaiveFeedForwardNeuralNetwork
+from tharsis.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
+from tharsis.nn.transformer.basic_self_attention import PositionwiseFeedForward
 from tests.nn import test_constants
 n_batch = 2
 n_head = 3

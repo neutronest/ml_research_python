@@ -6,10 +6,10 @@ import torch
 import torch.nn as nn
 
 
-from research.nn import embedding
-from research.squad import data
-from research.nn.seq2seq import vanilla_gru
-from research.nn.seq2seq.engine import vanilla_gru_engine
+from tharsis.nn import embedding
+from tharsis.squad import data
+from tharsis.nn.seq2seq import vanilla_gru
+from tharsis.nn.seq2seq.engine import vanilla_gru_engine
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

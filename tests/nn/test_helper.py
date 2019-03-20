@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 
 from tests.nn import test_constants
-from research.nn import helper
+from tharsis.nn import helper
 
 
 def test_layer_norm():

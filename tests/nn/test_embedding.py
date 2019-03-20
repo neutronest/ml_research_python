@@ -1,7 +1,7 @@
 import gensim
 from gensim.test.utils import common_texts
 
-from research.nn import embedding
+from tharsis.nn import embedding
 
 def test_add_special_word_to_embedding_vectors():
     embedding_model = gensim.models.Word2Vec(common_texts, size=100, window=5, min_count=1, workers=4)

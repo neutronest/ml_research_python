@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from research.nn import helper
+from tharsis.nn import helper
 
 
 class BasicMultiHeadSelfAttention(nn.Module):

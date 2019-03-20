@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 
-from research.nn.self_attention import NaiveMultiHeadSelfAttention
-from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
-from research.nn.self_attention import PositionwiseFeedForwardNetwork
+from tharsis.nn.self_attention import NaiveMultiHeadSelfAttention
+from tharsis.nn.self_attention import NaiveFeedForwardNeuralNetwork
+from tharsis.nn.self_attention import PositionwiseFeedForwardNetwork
 
 class NaiveEncoder(nn.Module):
     def __init__(

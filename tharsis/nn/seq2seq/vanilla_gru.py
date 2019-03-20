@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from research.nn import embedding
+from tharsis.nn import embedding
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

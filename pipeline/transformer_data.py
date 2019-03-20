@@ -2,7 +2,7 @@ import torch
 
 from transformer import preprocess
 from transformer.transformer import Constants as Constants
-from research.squad import data
+from tharsis.squad import data
 
 def prepare_data_instances(data_path):
     squad_data_list = data.generate_squad_data_list(data_path)

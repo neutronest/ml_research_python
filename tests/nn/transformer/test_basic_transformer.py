@@ -3,15 +3,15 @@ import torch
 import torch.nn as nn
 
 from tests.nn import test_constants
-from research.nn import helper
-from research.nn.transformer.basic_transformer import BasicEncoder, BasicEncoderLayer
-from research.nn.transformer.basic_transformer import BasicDecoder, BasicDecoderLayer
-from research.nn.transformer.basic_transformer import BasicTransformer
-from research.nn.transformer.basic_transformer import Embeddings
-from research.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
-from research.nn.transformer.basic_self_attention import PositionwiseFeedForward
-from research.nn.self_attention import NaiveFeedForwardNeuralNetwork
-from research.nn.self_attention import NaiveMultiHeadSelfAttention
+from tharsis.nn import helper
+from tharsis.nn.transformer.basic_transformer import BasicEncoder, BasicEncoderLayer
+from tharsis.nn.transformer.basic_transformer import BasicDecoder, BasicDecoderLayer
+from tharsis.nn.transformer.basic_transformer import BasicTransformer
+from tharsis.nn.transformer.basic_transformer import Embeddings
+from tharsis.nn.transformer.basic_self_attention import BasicMultiHeadSelfAttention
+from tharsis.nn.transformer.basic_self_attention import PositionwiseFeedForward
+from tharsis.nn.self_attention import NaiveFeedForwardNeuralNetwork
+from tharsis.nn.self_attention import NaiveMultiHeadSelfAttention
 
 
 def test_basic_encoder():
