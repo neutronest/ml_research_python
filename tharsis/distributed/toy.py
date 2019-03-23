@@ -4,6 +4,8 @@ import argparse
 from time import sleep
 from random import randint
 
+cuda0 = torch.device('cuda:0')
+
 def foo(rank, world_size):
     for step in range(100):
         # get random int
@@ -17,19 +19,20 @@ def foo(rank, world_size):
         print('rank: {}, step: {}, value: {}, reduced sum: {}.'.format(rank,step,value,float(tensor)))
         sleep(1)
 
-def initialize(rank, world_size, ip, port):
-    dist.init_process_group(backend='tcp',init_method='tcp://{}:{}'.format(ip, port),rank=rank,world_size=world_size)
+def initialize(backend, rank, world_size, ip, port):
+    dist.init_process_group(backend='gloo',init_method='tcp://{}:{}'.format(ip, port),rank=rank,world_size=world_size)
     foo(rank, world_size)
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--backend', type=str, default='gloo')
     parser.add_argument('--ip', type=str, default='127.0.0.1')
     parser.add_argument('--port', type=str, default='20000')
     parser.add_argument('--rank', '-r', type=int)
     parser.add_argument('--world-size', '-s', type=int)
     args = parser.parse_args()
     print(args)
-    initialize(args.rank, args.world_size, args.ip, args.port)
+    initialize(args.backend, args.rank, args.world_size, args.ip, args.port)
 
 if __name__ == '__main__':
     main()
