@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 from torch import optim
 
-from research.nn.seq2seq import vanilla_gru
-from research.nn import embedding
-from research.nn.seq2seq import engine
+from tharsis.nn.seq2seq import vanilla_gru
+from tharsis.nn import embedding
+from tharsis.nn.seq2seq import engine
 
 def generate_test_emebedding():
     embedding_model = gensim.models.Word2Vec(common_texts, size=100, window=5, min_count=1, workers=4)
