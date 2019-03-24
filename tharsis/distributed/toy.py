@@ -20,7 +20,11 @@ def foo(rank, world_size):
         sleep(1)
 
 def initialize(backend, rank, world_size, ip, port):
-    dist.init_process_group(backend='gloo',init_method='tcp://{}:{}'.format(ip, port),rank=rank,world_size=world_size)
+    dist.init_process_group(
+            backend='gloo',
+            init_method='tcp://{}:{}'.format(ip, port),
+            rank=rank,
+            world_size=world_size)
     foo(rank, world_size)
 
 def main():
